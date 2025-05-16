@@ -9,11 +9,13 @@
       forEachSupportedSystem = f: inputs.nixpkgs.lib.genAttrs supportedSystems (system: f {
         pkgs = import inputs.nixpkgs { inherit system; };
       });
-      # Override stdenv in order to change compiler:
-      stdenv = inputs.nixpkgs.clangStdenv;
     in
     {
-      devShells = forEachSupportedSystem ({ pkgs }: {
+      devShells = forEachSupportedSystem ({ pkgs }: 
+        let
+          stdenv = pkgs.clangStdenv;
+        in
+          {
         default = pkgs.mkShell.override
           {
             inherit stdenv;
