@@ -1,25 +1,40 @@
 {
-  "nodes": {
-    "nixpkgs": {
-      "locked": {
-        "lastModified": 1746663147,
-        "narHash": "sha256-Ua0drDHawlzNqJnclTJGf87dBmaO/tn7iZ+TCkTRpRc=",
-        "rev": "dda3dcd3fe03e991015e9a74b22d35950f264a54",
-        "revCount": 796699,
-        "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/NixOS/nixpkgs/0.1.796699%2Brev-dda3dcd3fe03e991015e9a74b22d35950f264a54/0196b263-02b0-7dec-8aca-c2506ed2485f/source.tar.gz"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://flakehub.com/f/NixOS/nixpkgs/0.1"
-      }
-    },
-    "root": {
-      "inputs": {
-        "nixpkgs": "nixpkgs"
-      }
-    }
-  },
-  "root": "root",
-  "version": 7
+  description = "A Nix-flake-based C/C++ development environment";
+
+  inputs.nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
+
+  outputs = inputs:
+    let
+      supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+      forEachSupportedSystem = f: inputs.nixpkgs.lib.genAttrs supportedSystems (system: f {
+        pkgs = import inputs.nixpkgs { inherit system; };
+      });
+      # Override stdenv in order to change compiler:
+      stdenv = inputs.nixpkgs.clangStdenv;
+    in
+    {
+      devShells = forEachSupportedSystem ({ pkgs }: {
+        default = pkgs.mkShell.override
+          {
+            inherit stdenv;
+          }
+          {
+            packages = with pkgs; [
+              clang-tools
+              # cmake
+              # codespell
+              # conan
+              # cppcheck
+              # doxygen
+              # gtest
+              # lcov
+              # vcpkg
+              # vcpkg-tool
+            ] ++ (if system == "aarch64-darwin" then [ ] else [ gdb ]);
+          };
+        env = {
+            CLANGD_FLAGS = "--query-driver=${pkgs.lib.getExe stdenv.cc}";
+        };
+      });
+    };
 }
