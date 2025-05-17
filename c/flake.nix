@@ -33,17 +33,17 @@
               # vcpkg
               # vcpkg-tool
             ] ++ (if system == "aarch64-darwin" then [ ] else [ gdb ]);
-          };
-        env = {
-            CLANGD_FLAGS = "--query-driver=${pkgs.lib.getExe stdenv.cc}";
-           
-        };
-          shellHook = 
-            ''
+              env = {
+                CLANGD_FLAGS = "--query-driver=${pkgs.lib.getExe stdenv.cc}";
+
+              };
+              shellHook = 
+                ''
               if [[ -n $GHOSTTY_RESOURCES_DIR ]]; then
               source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
               fi
               '';
+          };
       });
     };
 }
