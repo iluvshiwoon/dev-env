@@ -3,25 +3,25 @@
 
   inputs.nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
-  outputs = inputs:
-    let
-      supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-      forEachSupportedSystem = f: inputs.nixpkgs.lib.genAttrs supportedSystems (system: f {
-        pkgs = import inputs.nixpkgs { inherit system; };
-      });
-    in
-    {
-      devShells = forEachSupportedSystem ({ pkgs }: 
-        let
-          stdenv = pkgs.clangStdenv;
-        in
-          {
-        default = pkgs.mkShell.override
-          {
-            inherit stdenv;
-          }
-          {
-            packages = with pkgs; [
+  outputs = inputs: let
+    supportedSystems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
+    forEachSupportedSystem = f:
+      inputs.nixpkgs.lib.genAttrs supportedSystems (system:
+        f {
+          pkgs = import inputs.nixpkgs {inherit system;};
+        });
+  in {
+    devShells = forEachSupportedSystem ({pkgs}: let
+      stdenv = pkgs.clangStdenv;
+    in {
+      default =
+        pkgs.mkShell.override
+        {
+          inherit stdenv;
+        }
+        {
+          packages = with pkgs;
+            [
               clang-tools
               # cmake
               # codespell
@@ -32,18 +32,21 @@
               # lcov
               # vcpkg
               # vcpkg-tool
-            ] ++ (if system == "aarch64-darwin" then [ ] else [ gdb ]);
-              env = {
-                CLANGD_FLAGS = "--query-driver=${pkgs.lib.getExe stdenv.cc}";
-
-              };
-              shellHook = 
-                ''
-              if [[ -n $GHOSTTY_RESOURCES_DIR ]]; then
-              source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
-              fi
-              '';
+            ]
+            ++ (
+              if system == "aarch64-darwin"
+              then []
+              else [gdb]
+            );
+          env = {
+            CLANGD_FLAGS = "--query-driver=${pkgs.lib.getExe stdenv.cc}";
           };
-      });
-    };
+          shellHook = ''
+            if [[ -n $GHOSTTY_RESOURCES_DIR ]]; then
+            source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
+            fi
+          '';
+        };
+    });
+  };
 }
