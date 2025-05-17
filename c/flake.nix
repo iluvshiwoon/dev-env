@@ -36,6 +36,13 @@
           };
         env = {
             CLANGD_FLAGS = "--query-driver=${pkgs.lib.getExe stdenv.cc}";
+            shellHook = 
+            ''
+              if [[ -n $GHOSTTY_RESOURCES_DIR ]]; then
+            source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
+          fi
+            '';
+           
         };
       });
     };
