@@ -23,15 +23,7 @@
           packages = with pkgs;
             [
               clang-tools
-              # cmake
-              # codespell
-              # conan
-              # cppcheck
-              # doxygen
-              # gtest
-              # lcov
-              # vcpkg
-              # vcpkg-tool
+              valgrind
             ]
             ++ (
               if system == "aarch64-darwin"
@@ -42,9 +34,6 @@
             CLANGD_FLAGS = "--query-driver=${pkgs.lib.getExe stdenv.cc}";
           };
           # shellHook = ''
-          #   if [[ -n $GHOSTTY_RESOURCES_DIR ]]; then
-          #   source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
-          #   fi
           # '';
         };
     });
