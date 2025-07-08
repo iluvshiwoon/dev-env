@@ -15,11 +15,7 @@
       default = pkgs.mkShell {
         packages = with pkgs; [
           lua
-          luarocks
           lua-language-server
-          stylua              # Lua formatter
-          selene              # Lua linter
-          luacheck            # Another popular Lua linter
         ];
 
         # env = {
