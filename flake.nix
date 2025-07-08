@@ -109,7 +109,7 @@
         };
 	lua = {
 		path = ./lua;
-		description = "lua development environment"'
+		description = "lua development environment";
 	};
 
         # Aliases
