@@ -23,8 +23,6 @@
           packages = with pkgs;
             [
               clang-tools
-              man-pages           # For standard C libc man pages
-              man-pages-posix     # POSIX man pages
             ]
             ++ (
               if system == "aarch64-darwin"
@@ -37,8 +35,6 @@
           };
 
           shellHook = ''
-            # Ensure MANPATH includes local documentation
-            export MANPATH="${pkgs.man-pages}/share/man:${pkgs.man-pages-posix}/share/man:${pkgs.valgrind}/share/man:$MANPATH"
           '';
         };
     });
