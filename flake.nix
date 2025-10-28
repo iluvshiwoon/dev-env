@@ -107,6 +107,10 @@
           path = ./c;
           description = "C/C++ development environment";
         };
+	lua = {
+		path = ./lua;
+		description = "lua development environment";
+	};
 
         # Aliases
         cpp = c;
