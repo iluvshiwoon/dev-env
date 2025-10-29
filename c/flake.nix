@@ -23,6 +23,8 @@
           packages = with pkgs;
             [
               clang-tools
+	      bear
+	      cppman
             ]
             ++ (
               if system == "aarch64-darwin"
